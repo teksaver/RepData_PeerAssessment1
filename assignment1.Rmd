@@ -79,9 +79,33 @@ The median is `r format(medianSteps,nsmall=2)` if we consider 0-values days, whi
 Interestingly, if we remove the days with 0 steps due to missing values, we get a mean close to the median: `r format(meanWithoutZeroDays,nsmall=2)` instead of `r format(meanSteps, nsmall=2)` when those days bring the total down.
 
 
-
 ## Step 3: What is the average daily activity pattern?
 
+To find insights on the average daily activity pattern, we first create a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
+First, we group the activiy data frame by interval and calculate the mean for each interval
+
+```{r fiveMinutesIntervals}
+byinterval <- activity %>%
+  group_by(interval) %>%
+  summarise(avg=mean(steps,na.rm=TRUE))
+```
+
+The second question is : Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+```{r}
+maxInterval <- byinterval$interval[which.max(byinterval$avg)]
+maxAvgValue <- byinterval$avg[byinterval$interval==maxInterval]
+```
+
+We plot the answer to both questions in a single graph. A vertical line points out the interval with the maximum number of steps
+
+```{r}
+ggplot(byinterval,aes(x=interval,y=avg))+
+  geom_line()+
+  geom_vline(xintercept = maxInterval, colour="green", linetype = "longdash") +
+  geom_text(data = NULL, x= 1000,  y = 210, label = paste("Maximum average number (",format(maxAvgValue,nsmall=2),") is in interval",maxInterval))
+```
 
 
 ## Imputing missing values
