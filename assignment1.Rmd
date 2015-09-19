@@ -96,6 +96,7 @@ The second question is : Which 5-minute interval, on average across all the days
 ```{r}
 maxInterval <- byinterval$interval[which.max(byinterval$avg)]
 maxAvgValue <- byinterval$avg[byinterval$interval==maxInterval]
+maxInterval
 ```
 
 We plot the answer to both questions in a single graph. A vertical line points out the interval with the maximum number of steps
@@ -108,9 +109,61 @@ ggplot(byinterval,aes(x=interval,y=avg))+
 ```
 
 
-## Imputing missing values
+## Step 4: Imputing missing values
+
+1. First, we calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+```{r}
+table(complete.cases(activity))
+```
+We can see that we have 2304 rows with a missing value
+
+
+2. Then, we devise a strategy for filling in all of the missing values in the dataset. 
+
+First we check if the missing values are spread amongst all weekdays or if a particular day is mostly missing
+
+```{r}
+#make sure labels are in english on Ubuntu
+Sys.setlocale("LC_TIME", "en_US.UTF-8")
+table(weekdays(activity[complete.cases(activity)==FALSE,]$date))
+```
+
+This shows that it is not just a particular day that is missing data. Since data variations amount mostly to the weekday and interval, we choose the following strategy: for each NA value, we input the corresponding interval and weekday mean.
+
+3.  Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+First we add a weekday attribute to our activity dataframe
+
+```{r}
+activity$weekday <- factor(weekdays(activity$date),levels=c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"))
+```
+
+Then we calculate the mean for each day/interval
+```{r}
+meanByIntervalAndWeek <- activity %>%
+    group_by(interval,weekday) %>%
+    summarise(meanSteps=mean(steps,na.rm=TRUE))
+```
+
+Finally we join both tables and replace the NA values in the steps columns with the values from the meanSteps columns. We remove the meanSteps column to respect the "new dataset that is equal to the original dataset" demand.
+
+```{r}
+# use dplyr's left_join to join by weekday and interval
+filledActivity <- left_join(activity,meanByIntervalAndWeek,by=c("weekday","interval"))
+# replace NA's with the mean value for the row's weekday and interval
+filledActivity[is.na(filledActivity$steps),]$steps=filledActivity[is.na(filledActivity$steps),]$meanSteps
+# drop the meanSteps column in the new dataframe
+filledActivity <- subset(filledActivity, select = -meanSteps )
+```
+
+
+4.  Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 
 
-## Are there differences in activity patterns between weekdays and weekends?
+
+
+
+## Step 5: Are there differences in activity patterns between weekdays and weekends?
 
