@@ -27,9 +27,9 @@ unzip("activity.zip",exdir=".")
 
 ```
 
-2. Load the dataset in the activity variable
+2. Load the dataset in the activity variable. Cache for future use if needed.
 
-```{r}
+```{r loading, cache=TRUE}
 activity <- read.csv("activity.csv")
 ```
 
@@ -160,7 +160,7 @@ filledActivity <- subset(filledActivity, select = c(-meanSteps,-weekday))
 ```
 
 
-4.  Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+4.  Make a histogram (not a barplot!) of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 First we draw the histogram, using the same method as question 1, where the original `activity` dataframe is replaced by our `filledActivity` dataframe.
 
@@ -209,3 +209,5 @@ ggplot(byIntervalAndType,aes(x=interval,y=avg))+
     facet_grid(dayType ~ .)+
     labs(title="Average number of steps by interval and day type", y="Number of steps")
 ```
+
+We notice a shift on the right of the activities spikes, probably due to being able to wake up later on weekends!

@@ -27,7 +27,7 @@ if(!file.exists("activity.zip")){
 unzip("activity.zip",exdir=".")
 ```
 
-2. Load the dataset in the activity variable
+2. Load the dataset in the activity variable. Cache for future use if needed.
 
 
 ```r
@@ -60,11 +60,12 @@ The following histogram answers the question about the total number of steps tak
 
 ```r
 library(ggplot2)
-ggplot(bydate,aes(x=date,y=total))+
-  geom_bar(stat="identity")
+ggplot(bydate,aes(x=total))+
+  geom_histogram(binwidth=2000)+
+  labs(title="Histogram of total of steps taken per day", x="Steps per day", y="Frequency")
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
 
 2. Calculate and report the mean and median total number of steps taken per day
 
@@ -123,7 +124,7 @@ ggplot(byinterval,aes(x=interval,y=avg))+
     labs(title="Average number of steps by internal", y="Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
 
 
 ## Step 4: Imputing missing values
@@ -199,7 +200,7 @@ filledActivity <- subset(filledActivity, select = c(-meanSteps,-weekday))
 ```
 
 
-4.  Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+4.  Make a histogram (not a barplot!) of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 First we draw the histogram, using the same method as question 1, where the original `activity` dataframe is replaced by our `filledActivity` dataframe.
 
@@ -208,11 +209,12 @@ First we draw the histogram, using the same method as question 1, where the orig
 filledByDate <- filledActivity %>% 
     group_by(date) %>%
     summarise(total=sum(steps,na.rm=TRUE))
-ggplot(filledByDate,aes(x=date,y=total))+
-  geom_bar(stat="identity")
+ggplot(filledByDate,aes(x=total))+
+  geom_histogram(binwidth=2000)+
+  labs(title="Histogram of total of steps taken per day (NA values filled)", x="Steps per day (no NA)", y="Frequency")
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png) 
 
 Then we calculate the mean and median
 
@@ -225,7 +227,7 @@ medianFilledSteps <- median(filledByDate$total)
 * For the mean, we get 10821.21 instead of 9354.23
 * For the median, we get 11015 instead of  10395
 
-Filling missing values increase both, since they are no longer considered as zero values
+Filling missing values increase both median and spike. This is due to the spike on the lowest bin of the histogram habing pretty much disappeared, since missing values are no longer given 0 values.
 
 ## Step 5: Are there differences in activity patterns between weekdays and weekends?
 
@@ -255,4 +257,6 @@ ggplot(byIntervalAndType,aes(x=interval,y=avg))+
     labs(title="Average number of steps by interval and day type", y="Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png) 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png) 
+
+We notice a shift on the right of the activities spikes, probably due to being able to wake up later on weekends!
