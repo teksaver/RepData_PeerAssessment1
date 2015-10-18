@@ -266,22 +266,13 @@ ggplot(bydate,aes(x=total))+
 <li>Calculate and report the mean and median total number of steps taken per day</li>
 </ol>
 
-<p>We calculate the mean and median with two ways of &ldquo;ignoring&rdquo; the NA values of the data set: </p>
-
-<ul>
-<li><code>meanSteps</code> and <code>medianSteps</code> deal with the case when days without any steps are given 0 values</li>
-<li><code>meanWithoutZeroDays</code> and <code>medianWithoutZeroDays</code> calculate the averages when those days are removed</li>
-</ul>
+<p>We calculate the mean and median, &ldquo;ignoring&rdquo; the NA values of the data set. </p>
 
 <pre><code class="r">meanSteps &lt;- mean(bydate$total)
-meanWithoutZeroDays &lt;- mean(bydate$total[bydate$total!=0])
 medianSteps &lt;- median(bydate$total)
-medianWithoutZeroDays &lt;- median(bydate$total[bydate$total!=0])
 </code></pre>
 
-<p>The median is 10395 if we consider 0-values days, which is close to the median when we remove those days, which is 10765</p>
-
-<p>Interestingly, if we remove the days with 0 steps due to missing values, we get a mean close to the median: 10766.19 instead of 9354.23 when those days bring the total down.</p>
+<p>The median is 10395. The mean is 9354.23. The previous histogram gives the intuition that days without measurements bring those averages down by providing 0 values in the calculation.</p>
 
 <h2>Step 3: What is the average daily activity pattern?</h2>
 

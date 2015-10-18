@@ -63,21 +63,14 @@ ggplot(bydate,aes(x=total))+
 
 2. Calculate and report the mean and median total number of steps taken per day
 
-We calculate the mean and median with two ways of "ignoring" the NA values of the data set: 
-
-* `meanSteps` and `medianSteps` deal with the case when days without any steps are given 0 values
-* `meanWithoutZeroDays` and `medianWithoutZeroDays` calculate the averages when those days are removed
+We calculate the mean and median, "ignoring" the NA values of the data set. 
 
 ```{r averages}
 meanSteps <- mean(bydate$total)
-meanWithoutZeroDays <- mean(bydate$total[bydate$total!=0])
 medianSteps <- median(bydate$total)
-medianWithoutZeroDays <- median(bydate$total[bydate$total!=0])
 ```
 
-The median is `r format(medianSteps,nsmall=2)` if we consider 0-values days, which is close to the median when we remove those days, which is `r format(medianWithoutZeroDays,nsmall=2)`
-
-Interestingly, if we remove the days with 0 steps due to missing values, we get a mean close to the median: `r format(meanWithoutZeroDays,nsmall=2)` instead of `r format(meanSteps, nsmall=2)` when those days bring the total down.
+The median is `r format(medianSteps,nsmall=2)`. The mean is `r format(meanSteps, nsmall=2)`. The previous histogram gives the intuition that days without measurements bring those averages down by providing 0 values in the calculation.
 
 
 ## Step 3: What is the average daily activity pattern?
